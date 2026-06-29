@@ -20,7 +20,7 @@ export const listShops = asyncHandler(async (req, res) => {
   const shops = await Shop.find({
     approvalStatus: 'APPROVED',
   }).select(
-    'name address status queueCount maxQueueCount pricing'
+    'shopName address status queueCount maxQueueCount pricing'
   );
   res.json(shops);
 });
@@ -39,7 +39,7 @@ export const getShopById = asyncHandler(async (req, res) => {
   const shop = await Shop.findOne({
     _id: req.params.id,
     approvalStatus: 'APPROVED',
-  }).select('name address status queueCount maxQueueCount pricing');
+  }).select('shopName address status queueCount maxQueueCount pricing');
 
   if (!shop) {
     res.status(404);
