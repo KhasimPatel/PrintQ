@@ -6,6 +6,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import shopRoutes from './routes/shopRoutes.js';
 import fileRoutes from './routes/fileRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 app.use('/api/orders', orderRoutes);
 app.use('/api/shops', shopRoutes);
 app.use('/api/files', fileRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
