@@ -1,15 +1,12 @@
 // src/middleware/auth.js
-//
-// Students don't have accounts (per spec — name/mobile/PRN per order only),
-// so only shop owners authenticate. This protects shop-owner-only routes
-// (accept/reject/printing/ready/complete an order).
 
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
-import ShopOwner from '../models/ShopOwner.js';
+import Shop from '../models/Shop.js';
 
 export const protectShopOwner = asyncHandler(async (req, res, next) => {
   let token;
+
   const authHeader = req.headers.authorization;
 
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -23,14 +20,23 @@ export const protectShopOwner = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const owner = await ShopOwner.findById(decoded.ownerId).select('-passwordHash');
-    if (!owner) {
+
+    const shop = await Shop.findById(decoded.shopId).select('-password');
+
+    if (!shop) {
       res.status(401);
-      throw new Error('Not authorized. Owner not found.');
+      throw new Error('Shop not found.');
     }
-    req.shopOwner = owner; // includes owner.shop, the ObjectId of their shop
+
+    if (shop.approvalStatus !== 'APPROVED') {
+      res.status(403);
+      throw new Error('Shop is not approved.');
+    }
+
+    req.shop = shop;
+
     next();
-  } catch {
+  } catch (error) {
     res.status(401);
     throw new Error('Not authorized. Invalid or expired token.');
   }

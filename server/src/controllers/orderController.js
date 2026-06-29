@@ -73,18 +73,18 @@ export const initiateOrder = asyncHandler(async (req, res) => {
 
   let razorpayOrder;
 
-if (process.env.BYPASS_PAYMENT === "true") {
-  razorpayOrder = {
-    id: `DEV_ORDER_${Date.now()}`,
-    amount: priceSummary.totalPrice * 100,
-    currency: "INR",
-  };
-} else {
-  razorpayOrder = await createRazorpayOrder(
-    priceSummary.totalPrice,
-    `printgo_${Date.now()}`
-  );
-}
+  if (process.env.BYPASS_PAYMENT === "true") {
+    razorpayOrder = {
+      id: `DEV_ORDER_${Date.now()}`,
+      amount: priceSummary.totalPrice * 100,
+      currency: "INR",
+    };
+  } else {
+    razorpayOrder = await createRazorpayOrder(
+      priceSummary.totalPrice,
+      `printgo_${Date.now()}`
+    );
+  }
 
   // Persist the server's own record of this order, keyed by razorpayOrderId.
   // verify-payment will look THIS up — it will not trust anything the
@@ -198,7 +198,7 @@ export const getOrderStatus = asyncHandler(async (req, res) => {
  * Shop dashboard: current queue, urgent-first then oldest-first.
  */
 export const getShopOrders = asyncHandler(async (req, res) => {
-  const shopId = req.shopOwner.shop;
+  const shopId = req.shop._id;
   const { status } = req.query;
 
   const filter = { shop: shopId };
@@ -209,22 +209,22 @@ export const getShopOrders = asyncHandler(async (req, res) => {
 });
 
 export const acceptOrder = asyncHandler(async (req, res) => {
-  const order = await transitionOrderStatus(req.params.id, req.shopOwner.shop, 'ACCEPTED');
+  const order = await transitionOrderStatus(req.params.id, req.shop._id, 'ACCEPTED');
   res.json({ message: 'Order accepted.', order });
 });
 
 export const markPrinting = asyncHandler(async (req, res) => {
-  const order = await transitionOrderStatus(req.params.id, req.shopOwner.shop, 'PRINTING');
+  const order = await transitionOrderStatus(req.params.id, req.shop._id, 'PRINTING');
   res.json({ message: 'Order marked as printing.', order });
 });
 
 export const markReady = asyncHandler(async (req, res) => {
-  const order = await transitionOrderStatus(req.params.id, req.shopOwner.shop, 'READY');
+  const order = await transitionOrderStatus(req.params.id, req.shop._id, 'READY');
   res.json({ message: 'Order ready for pickup.', order });
 });
 
 export const markCompleted = asyncHandler(async (req, res) => {
-  const order = await transitionOrderStatus(req.params.id, req.shopOwner.shop, 'COMPLETED');
+  const order = await transitionOrderStatus(req.params.id, req.shop._id, 'COMPLETED');
   res.json({ message: 'Order completed.', order });
 });
 
@@ -234,6 +234,6 @@ export const rejectOrder = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Rejection reason is required.');
   }
-  const order = await rejectOrderWithRefund(req.params.id, req.shopOwner.shop, reason, note);
+  const order = await rejectOrderWithRefund(req.params.id, req.shop._id, reason, note);
   res.json({ message: 'Order rejected. Refund initiated if payment was made.', order });
 });
