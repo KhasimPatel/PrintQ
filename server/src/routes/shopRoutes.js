@@ -16,10 +16,10 @@ router.get('/', listShops); // powers the /student shop picker
 router.get('/:id', getShopById);
 
 // --- Shop owner auth ---
-router.post('/owner/register', registerShopOwner);
-router.post('/owner/login', loginShopOwner);
+router.post('/register', registerShopOwner);
+router.post('/login', loginShopOwner);
 
 // --- Shop owner, protected ---
-router.patch('/owner/status', protectShopOwner, updateShopStatus);
+router.patch('/status', protectShopOwner, updateShopStatus);
 
 export default router;
