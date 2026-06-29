@@ -14,7 +14,9 @@ import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import { IMAGE_MIME_TYPES } from '../models/constants.js';
 
-const USE_MOCK = process.env.USE_MOCK_STORAGE !== 'false'; // default true
+function useMockStorage() {
+  return process.env.USE_MOCK_STORAGE !== "false";
+}
 
 const MOCK_UPLOAD_DIR = path.join(process.cwd(), 'mock-uploads');
 
@@ -59,7 +61,7 @@ function uploadBufferToCloudinary(buffer, options) {
  * @returns {Promise<{ fileUrl: string, fileName: string, fileSize: number }>}
  */
 export async function uploadFile(file) {
-  if (USE_MOCK) {
+  if (useMockStorage()) {
     ensureMockDirExists();
     const ext = path.extname(file.originalname);
     const storedName = `${crypto.randomUUID()}${ext}`;
@@ -88,6 +90,7 @@ export async function uploadFile(file) {
 
   return {
     fileUrl: result.secure_url,
+    publicId: result.public_id,
     fileName: file.originalname,
     fileSize: file.size,
   };
@@ -98,4 +101,15 @@ export async function uploadFile(file) {
  */
 export async function uploadFiles(files) {
   return Promise.all(files.map(uploadFile));
+}
+
+/**
+ * Delete file from Cloudinary using publicId
+ */
+export async function deleteFile(publicId, resourceType = "raw") {
+  ensureCloudinaryConfigured();
+
+  return cloudinary.uploader.destroy(publicId, {
+    resource_type: resourceType,
+  });
 }

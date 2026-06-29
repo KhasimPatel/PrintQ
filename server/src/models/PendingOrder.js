@@ -32,6 +32,7 @@ const pendingOrderSchema = new mongoose.Schema({
       fileName: { type: String, required: true },
       fileSize: { type: Number, required: true },
       fileUrl: { type: String, required: true },
+      publicId: { type: String, required: true },
       pageCount: { type: Number, required: true },
       _id: false,
     },

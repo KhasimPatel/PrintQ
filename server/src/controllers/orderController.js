@@ -45,7 +45,11 @@ export const initiateOrder = asyncHandler(async (req, res) => {
   validateOrderFiles(req.files, resolvedPageCounts, copiesNum);
 
   const uploaded = await uploadFiles(req.files);
+  // console output for debugging: what was uploaded, what page counts were resolved
+  console.log("Uploaded Files =>", uploaded);
   const files = uploaded.map((f, i) => ({ ...f, pageCount: resolvedPageCounts[i] }));
+  // console.log("Files with Page Counts =>", files);
+  console.log("Final Files =>", files);
 
   const isUrgentBool = isUrgent === 'true' || isUrgent === true;
 
@@ -65,7 +69,22 @@ export const initiateOrder = asyncHandler(async (req, res) => {
     shopPricing: shop.pricing,
   });
 
-  const razorpayOrder = await createRazorpayOrder(priceSummary.totalPrice, `printgo_${Date.now()}`);
+  // const razorpayOrder = await createRazorpayOrder(priceSummary.totalPrice, `printgo_${Date.now()}`);
+
+  let razorpayOrder;
+
+if (process.env.BYPASS_PAYMENT === "true") {
+  razorpayOrder = {
+    id: `DEV_ORDER_${Date.now()}`,
+    amount: priceSummary.totalPrice * 100,
+    currency: "INR",
+  };
+} else {
+  razorpayOrder = await createRazorpayOrder(
+    priceSummary.totalPrice,
+    `printgo_${Date.now()}`
+  );
+}
 
   // Persist the server's own record of this order, keyed by razorpayOrderId.
   // verify-payment will look THIS up — it will not trust anything the
@@ -97,10 +116,24 @@ export const initiateOrder = asyncHandler(async (req, res) => {
 export const verifyAndCreateOrder = asyncHandler(async (req, res) => {
   const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
 
-  const isValid = verifyPaymentSignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature });
-  if (!isValid) {
-    res.status(400);
-    throw new Error('Payment verification failed.');
+  // const isValid = verifyPaymentSignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature });
+  // if (!isValid) {
+  //   res.status(400);
+  //   throw new Error('Payment verification failed.');
+  // }
+  const bypassPayment = process.env.BYPASS_PAYMENT === "true";
+
+  if (!bypassPayment) {
+    const isValid = verifyPaymentSignature({
+      razorpayOrderId,
+      razorpayPaymentId,
+      razorpaySignature,
+    });
+
+    if (!isValid) {
+      res.status(400);
+      throw new Error("Payment verification failed.");
+    }
   }
 
   const pending = await PendingOrder.findOne({ razorpayOrderId });

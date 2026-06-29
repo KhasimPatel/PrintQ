@@ -16,10 +16,31 @@ import {
 
 const fileSchema = new mongoose.Schema(
   {
-    fileName: { type: String, required: true },
-    fileSize: { type: Number, required: true }, // bytes
-    fileUrl: { type: String, required: true },
-    pageCount: { type: Number, required: true, min: 1 },
+    fileName: {
+      type: String,
+      required: true,
+    },
+
+    fileSize: {
+      type: Number,
+      required: true,
+    },
+
+    fileUrl: {
+      type: String,
+      required: true,
+    },
+
+    publicId: {
+      type: String,
+      required: true,
+    },
+
+    pageCount: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
   },
   { _id: false }
 );
@@ -103,6 +124,7 @@ const orderSchema = new mongoose.Schema(
 
     statusTimestamps: {
       acceptedAt: { type: Date, default: null },
+      pendingAt: { type: Date, default: null },
       printingAt: { type: Date, default: null },
       readyAt: { type: Date, default: null },
       completedAt: { type: Date, default: null },
