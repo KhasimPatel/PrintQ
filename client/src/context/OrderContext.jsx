@@ -172,6 +172,24 @@ export function OrderProvider({ children }) {
     return () => clearInterval(interval);
   }, [addToast]);
 
+  // Resume tracking an active order after page refresh
+  useEffect(() => {
+    const savedOrderId = localStorage.getItem("printgo_active_order_id");
+    if (!savedOrderId) return;
+
+    const resumeOrder = async () => {
+      try {
+        const res = await trackOrder(savedOrderId);
+        dispatch({ type: "SET_ORDER", payload: res });
+      } catch (err) {
+        console.error("Failed to resume order tracking:", err);
+        localStorage.removeItem("printgo_active_order_id");
+      }
+    };
+
+    resumeOrder();
+  }, []);
+
   // Poll for order status updates
   useEffect(() => {
     if (!state.order) {
@@ -182,11 +200,26 @@ export function OrderProvider({ children }) {
       return;
     }
 
+    // const pollOrderStatus = async () => {
+    //   try {
+    //     // const res = await trackOrder(state.order.id || state.order.orderId);
+    //     const res = await trackOrder(state.order.orderId);
+    //     dispatch({ type: "SET_ORDER", payload: res });
+    //   } catch (err) {
+    //     console.error("Failed to track order:", err);
+    //   }
+    // };
+
+    const TERMINAL_STATUSES = ["COMPLETED", "REJECTED", "REFUND_INITIATED"];
+
     const pollOrderStatus = async () => {
       try {
-        // const res = await trackOrder(state.order.id || state.order.orderId);
         const res = await trackOrder(state.order.orderId);
         dispatch({ type: "SET_ORDER", payload: res });
+
+        if (TERMINAL_STATUSES.includes(res.status)) {
+          localStorage.removeItem("printgo_active_order_id");
+        }
       } catch (err) {
         console.error("Failed to track order:", err);
       }
@@ -257,6 +290,7 @@ export function OrderProvider({ children }) {
 
       const order = verifyRes.order || verifyRes;
       dispatch({ type: "SET_ORDER", payload: order });
+      localStorage.setItem("printgo_active_order_id", order.orderId);
       addToast("Payment successful! Order placed.", "success");
 
       setTimeout(() => {

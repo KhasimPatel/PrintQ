@@ -127,19 +127,19 @@ export default function OrderTrackingSection() {
               <div>
                 <dt className="text-xs text-text-muted">Name</dt>
                 <dd className="font-medium text-text">
-                  {order.name || student.name}
+                  {order.student?.fullName || student.name}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs text-text-muted">Mobile</dt>
                 <dd className="font-medium text-text">
-                  {order.mobileNumber || student.mobileNumber}
+                  {order.student?.mobileNumber || student.mobileNumber}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs text-text-muted">College PRN</dt>
                 <dd className="font-medium text-text">
-                  {order.prn || student.prn}
+                  {order.student?.prn || student.prn}
                 </dd>
               </div>
             </dl>
