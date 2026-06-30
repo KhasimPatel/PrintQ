@@ -21,15 +21,15 @@ const shopSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // openingTime: {
-    //   type: String,
-    //   required: true,
-    // },
+    openingTime: {
+      type: String,
+      required: false,
+    },
 
-    // closingTime: {
-    //   type: String,
-    //   required: true,
-    // },
+    closingTime: {
+      type: String,
+      required: false,
+    },
 
     // ==========================
     // Owner Details

@@ -11,35 +11,21 @@ function generateToken(shopId) {
   });
 }
 
-// Public: powers the student shop-picker on /student.
-// export const listShops = asyncHandler(async (req, res) => {
-//   const shops = await Shop.find().select('name address status queueCount maxQueueCount pricing');
-//   res.json(shops);
-// });
 export const listShops = asyncHandler(async (req, res) => {
   const shops = await Shop.find({
     approvalStatus: 'APPROVED',
   }).select(
-    'shopName address status queueCount maxQueueCount pricing'
+    'shopName address status queueCount maxQueueCount pricing openingTime closingTime'
   );
   res.json(shops);
 });
 
-// export const getShopById = asyncHandler(async (req, res) => {
-//   const shop = await Shop.findById(req.params.id).select(
-//     'name address status queueCount maxQueueCount pricing'
-//   );
-//   if (!shop) {
-//     res.status(404);
-//     throw new Error('Shop not found.');
-//   }
-//   res.json(shop);
-// });
+
 export const getShopById = asyncHandler(async (req, res) => {
   const shop = await Shop.findOne({
     _id: req.params.id,
     approvalStatus: 'APPROVED',
-  }).select('shopName address status queueCount maxQueueCount pricing');
+  }).select('shopName address status queueCount maxQueueCount pricing openingTime closingTime');
 
   if (!shop) {
     res.status(404);
@@ -48,32 +34,6 @@ export const getShopById = asyncHandler(async (req, res) => {
 
   res.json(shop);
 });
-
-// Dev/setup convenience — in practice you'd seed shop owners, not expose
-// open registration, but this keeps local testing simple for now.
-// export const registerShopOwner = asyncHandler(async (req, res) => {
-//   const { email, password, shopId } = req.body;
-
-//   const shop = await Shop.findById(shopId);
-//   if (!shop) {
-//     res.status(404);
-//     throw new Error('Shop not found.');
-//   }
-
-//   const exists = await ShopOwner.findOne({ email });
-//   if (exists) {
-//     res.status(409);
-//     throw new Error('An owner account with this email already exists.');
-//   }
-
-//   const passwordHash = await bcrypt.hash(password, 10);
-//   const owner = await ShopOwner.create({ email, passwordHash, shop: shop._id });
-
-//   res.status(201).json({
-//     owner: { id: owner._id, email: owner.email, shop: owner.shop },
-//     token: generateToken(owner._id),
-//   });
-// });
 
 export const registerShopOwner = asyncHandler(async (req, res) => {
   const {
@@ -105,7 +65,7 @@ export const registerShopOwner = asyncHandler(async (req, res) => {
   // Create new shop
   const shop = await Shop.create({
     ownerName,
-    shopName, 
+    shopName,
     email,
     mobile,
     address,
@@ -120,21 +80,6 @@ export const registerShopOwner = asyncHandler(async (req, res) => {
     shopId: shop._id,
   });
 });
-
-// export const loginShopOwner = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
-//   const owner = await ShopOwner.findOne({ email });
-
-//   if (!owner || !(await bcrypt.compare(password, owner.passwordHash))) {
-//     res.status(401);
-//     throw new Error('Invalid email or password.');
-//   }
-
-//   res.json({
-//     owner: { id: owner._id, email: owner.email, shop: owner.shop },
-//     token: generateToken(owner._id),
-//   });
-// });
 
 export const loginShopOwner = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -173,9 +118,14 @@ export const loginShopOwner = asyncHandler(async (req, res) => {
     shop: {
       id: shop._id,
       ownerName: shop.ownerName,
-      shopName: shop.name, // change if renamed
+      shopName: shop.shopName,
       email: shop.email,
       approvalStatus: shop.approvalStatus,
+      status: shop.status,
+      queueCount: shop.queueCount,
+      maxQueueCount: shop.maxQueueCount,
+      openingTime: shop.openingTime,
+      closingTime: shop.closingTime,
     },
   });
 });
@@ -191,4 +141,22 @@ export const updateShopStatus = asyncHandler(async (req, res) => {
 
   const shop = await Shop.findByIdAndUpdate(req.shop._id, { status }, { new: true });
   res.json({ message: `Shop status updated to ${status}.`, shop });
+});
+
+// Shop owner updates their own shop's opening/closing time, anytime (daily).
+export const updateShopTimings = asyncHandler(async (req, res) => {
+  const { openingTime, closingTime } = req.body;
+
+  if (!openingTime || !closingTime) {
+    res.status(400);
+    throw new Error('Both openingTime and closingTime are required.');
+  }
+
+  const shop = await Shop.findByIdAndUpdate(
+    req.shop._id,
+    { openingTime, closingTime },
+    { new: true }
+  );
+
+  res.json({ message: 'Shop timings updated.', shop });
 });

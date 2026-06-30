@@ -8,8 +8,9 @@ import {
   verifyAndCreateOrder,
   getOrderStatus,
   getShopOrders,
+  getShopDashboardSummary,
   acceptOrder,
-  markPrinting,
+  // markPrinting,
   markReady,
   markCompleted,
   rejectOrder,
@@ -23,9 +24,10 @@ router.post('/verify-payment', verifyAndCreateOrder);
 router.get('/track/:orderId', getOrderStatus); // polling target, e.g. ORD-2026-0001
 
 // --- Shop-owner-facing (protected) ---
+router.get('/shop/dashboard-summary', protectShopOwner, getShopDashboardSummary);
 router.get('/shop/mine', protectShopOwner, getShopOrders);
 router.patch('/:id/accept', protectShopOwner, acceptOrder);
-router.patch('/:id/printing', protectShopOwner, markPrinting);
+// router.patch('/:id/printing', protectShopOwner, markPrinting);
 router.patch('/:id/ready', protectShopOwner, markReady);
 router.patch('/:id/complete', protectShopOwner, markCompleted);
 router.patch('/:id/reject', protectShopOwner, rejectOrder);

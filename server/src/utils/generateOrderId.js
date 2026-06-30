@@ -1,5 +1,4 @@
 // src/utils/generateOrderId.js
-//
 // Turns OrderCounter's atomic increment into a ready-to-use function.
 // Call this once, at the moment you're about to create an Order document.
 

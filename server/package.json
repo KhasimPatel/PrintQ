@@ -1,5 +1,5 @@
 {
-  "name": "printgo-backend",
+  "name": "PrintQ",
   "version": "1.0.0",
   "description": "Backend for Xerox/Printing Management System",
   "main": "src/server.js",

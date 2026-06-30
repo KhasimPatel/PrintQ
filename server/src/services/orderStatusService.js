@@ -21,8 +21,7 @@ import { refundPayment } from './razorpayService.js';
 // Any transition not listed here is rejected.
 const TRANSITIONS = {
   PENDING: ['ACCEPTED', 'REJECTED'],
-  ACCEPTED: ['PRINTING', 'REJECTED'],
-  PRINTING: ['READY'],
+  ACCEPTED: ['READY', 'REJECTED'],
   READY: ['COMPLETED'],
   COMPLETED: [],
   REJECTED: [],
@@ -31,7 +30,7 @@ const TRANSITIONS = {
 
 // Statuses that count toward a shop's active queue. Used to decide when
 // queueCount should be decremented (order leaving the active queue).
-const ACTIVE_STATUSES = ['PENDING', 'ACCEPTED', 'PRINTING'];
+const ACTIVE_STATUSES = ['PENDING', 'ACCEPTED'];
 
 export function canTransition(fromStatus, toStatus) {
   const allowed = TRANSITIONS[fromStatus];

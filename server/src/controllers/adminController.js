@@ -111,27 +111,27 @@ export const rejectShop = asyncHandler(async (req, res) => {
 });
 
 export const getApprovedShops = asyncHandler(async (req, res) => {
-  const approvedShops = await Shop.find({
-    approvalStatus: "APPROVED",
-  }).select(
-    "-password"
-  );
+    const approvedShops = await Shop.find({
+        approvalStatus: "APPROVED",
+    }).select(
+        "-password"
+    );
 
-  res.json({
-    success: true,
-    count: approvedShops.length,
-    shops: approvedShops,
-  });
+    res.json({
+        success: true,
+        count: approvedShops.length,
+        shops: approvedShops,
+    });
 });
 
 export const getRejectedShops = asyncHandler(async (req, res) => {
-  const rejectedShops = await Shop.find({
-    approvalStatus: "REJECTED",
-  }).select("-password");
+    const rejectedShops = await Shop.find({
+        approvalStatus: "REJECTED",
+    }).select("-password");
 
-  res.json({
-    success: true,
-    count: rejectedShops.length,
-    shops: rejectedShops,
-  });
+    res.json({
+        success: true,
+        count: rejectedShops.length,
+        shops: rejectedShops,
+    });
 });

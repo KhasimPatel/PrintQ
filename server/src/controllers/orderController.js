@@ -46,10 +46,10 @@ export const initiateOrder = asyncHandler(async (req, res) => {
 
   const uploaded = await uploadFiles(req.files);
   // console output for debugging: what was uploaded, what page counts were resolved
-  console.log("Uploaded Files =>", uploaded);
+  // console.log("Uploaded Files =>", uploaded);
   const files = uploaded.map((f, i) => ({ ...f, pageCount: resolvedPageCounts[i] }));
   // console.log("Files with Page Counts =>", files);
-  console.log("Final Files =>", files);
+  // console.log("Final Files =>", files);
 
   const isUrgentBool = isUrgent === 'true' || isUrgent === true;
 
@@ -213,10 +213,10 @@ export const acceptOrder = asyncHandler(async (req, res) => {
   res.json({ message: 'Order accepted.', order });
 });
 
-export const markPrinting = asyncHandler(async (req, res) => {
-  const order = await transitionOrderStatus(req.params.id, req.shop._id, 'PRINTING');
-  res.json({ message: 'Order marked as printing.', order });
-});
+// export const markPrinting = asyncHandler(async (req, res) => {
+//   const order = await transitionOrderStatus(req.params.id, req.shop._id, 'PRINTING');
+//   res.json({ message: 'Order marked as printing.', order });
+// });
 
 export const markReady = asyncHandler(async (req, res) => {
   const order = await transitionOrderStatus(req.params.id, req.shop._id, 'READY');
@@ -236,4 +236,52 @@ export const rejectOrder = asyncHandler(async (req, res) => {
   }
   const order = await rejectOrderWithRefund(req.params.id, req.shop._id, reason, note);
   res.json({ message: 'Order rejected. Refund initiated if payment was made.', order });
+});
+
+/**
+ * Shop dashboard summary — counts by status for quick stats display.
+ */
+/**
+ * Shop dashboard summary — counts + revenue for the dashboard cards.
+ * Field names match what ShopDashboard.jsx expects directly.
+ */
+export const getShopDashboardSummary = asyncHandler(async (req, res) => {
+  const shopId = req.shop._id;
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const [
+    todaysOrdersCount,
+    pendingCount,
+    rejectedCount,
+    readyCount,
+    completedTodayOrders,
+  ] = await Promise.all([
+    Order.countDocuments({ shop: shopId, createdAt: { $gte: startOfDay, $lte: endOfDay } }),
+    Order.countDocuments({ shop: shopId, status: 'ACCEPTED' }),
+    Order.countDocuments({ shop: shopId, status: { $in: ['REJECTED', 'REFUND_INITIATED'] } }),
+    Order.countDocuments({ shop: shopId, status: 'READY' }),
+    Order.find({
+      shop: shopId,
+      status: 'COMPLETED',
+      updatedAt: { $gte: startOfDay, $lte: endOfDay },
+    }),
+  ]);
+
+  const todaysRevenue = completedTodayOrders.reduce(
+    (sum, o) => sum + (o.priceSummary?.totalPrice || 0),
+    0
+  );
+
+  res.json({
+    todaysOrdersCount,
+    pendingCount,
+    rejectedCount,
+    readyCount,
+    todaysRevenue,
+    completedTodayCount: completedTodayOrders.length,
+  });
 });

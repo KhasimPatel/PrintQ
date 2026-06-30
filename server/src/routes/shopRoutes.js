@@ -7,6 +7,7 @@ import {
   registerShopOwner,
   loginShopOwner,
   updateShopStatus,
+  updateShopTimings, 
 } from '../controllers/shopController.js';
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.post('/login', loginShopOwner);
 
 // --- Shop owner, protected ---
 router.patch('/status', protectShopOwner, updateShopStatus);
+router.patch('/timings', protectShopOwner, updateShopTimings);   // new route for updating shop timings
 
 export default router;
