@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #eab308;
+  --color-primary-dark: #ca8a04;
+  --color-primary-light: #fef9c3;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-background: #f8f7f4;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-hover: #f3f4f6;
+  --color-cta-bg: #1f2937;
+  --color-cta-muted: #d1d5db;
+  --font-sans: "Outfit", "Poppins", system-ui, sans-serif;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode — premium charcoal palette with gold accents */
+.dark {
+  --color-primary: #eab308;
+  --color-primary-dark: #facc15;
+  --color-primary-light: #422006;
+  --color-text: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-background: #111827;
+  --color-surface: #1f2937;
+  --color-border: #374151;
+  --color-hover: #374151;
+  --color-cta-bg: #0b0f17;
+  --color-cta-muted: #9ca3af;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
