@@ -8,8 +8,8 @@ const reviews = [
     text: "Submitted my assignment at 11 PM and picked it up before class. No queue, no stress. This is exactly what we needed on campus.",
   },
   {
-    name: "Arjun Mehta",
-    college: "MBA, 1st Year",
+    name: "Krushna Chavan",
+    college: "B.Tech, Final Year",
     rating: 5,
     text: "The single-page flow is brilliant. I uploaded 3 PDFs, paid on my phone, and got a notification when prints were ready. Super fast.",
   },

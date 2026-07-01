@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
 import Shop from "../models/Shop.js";
+import { sendShopApprovedEmail, sendShopRejectedEmail } from '../services/emailService.js';
 
 function generateAdminToken(adminId) {
     return jwt.sign(
@@ -73,6 +74,7 @@ export const approveShop = asyncHandler(async (req, res) => {
     shop.approvalStatus = "APPROVED";
 
     await shop.save();
+    sendShopApprovedEmail(shop);
 
     const responseShop = await Shop.findById(shop._id).select("-password");
 
@@ -99,13 +101,14 @@ export const rejectShop = asyncHandler(async (req, res) => {
     shop.approvalStatus = "REJECTED";
 
     await shop.save();
+    sendShopRejectedEmail(shop);
 
     const responseShop = shop.toObject();
     delete responseShop.password;
 
     res.json({
         success: true,
-        message: "Shop approved successfully.",
+        message: "Shop rejected successfully.",
         shop: responseShop,
     });
 });

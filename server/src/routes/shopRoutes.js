@@ -7,7 +7,10 @@ import {
   registerShopOwner,
   loginShopOwner,
   updateShopStatus,
-  updateShopTimings, 
+  updateShopTimings,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 } from '../controllers/shopController.js';
 
 const router = express.Router();
@@ -19,6 +22,11 @@ router.get('/:id', getShopById);
 // --- Shop owner auth ---
 router.post('/register', registerShopOwner);
 router.post('/login', loginShopOwner);
+
+// --- Forgot Password (public) ---
+router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp', verifyOtp);
+router.post('/reset-password', resetPassword);
 
 // --- Shop owner, protected ---
 router.patch('/status', protectShopOwner, updateShopStatus);

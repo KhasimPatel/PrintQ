@@ -59,6 +59,7 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,9 +89,12 @@ export default function Signup() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
-    const success = await registerShop(fields);
-    if (success) {
+    setSubmitError("");
+    const result = await registerShop(fields);
+    if (result.success) {
       setSubmittedSuccess(true);
+    } else if (result.message) {
+      setSubmitError(result.message);
     }
   };
 
@@ -237,6 +241,18 @@ export default function Signup() {
             <p className="mt-4 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 border border-green-200">
               Registration submitted successfully. Please wait for Admin
               approval.
+            </p>
+          )}
+          {submitError && (
+            <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 border border-red-200">
+              {submitError}{" "}
+              <Link
+                to="/shop/login"
+                className="font-semibold underline"
+                style={{ color: "#EAB308" }}
+              >
+                Please sign in.
+              </Link>
             </p>
           )}
 

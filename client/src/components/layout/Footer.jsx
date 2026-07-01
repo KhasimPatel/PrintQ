@@ -7,9 +7,12 @@ const footerLinks = {
     { label: "Benefits", href: "#benefits" },
   ],
   contact: [
-    { label: "support@printq.in", href: "mailto:support@printq.in" },
-    { label: "+91 98765 43210", href: "tel:+919876543210" },
-    { label: "Campus Area, India", href: "#" },
+    {
+      label: "printqsupport@gmail.com",
+      href: "mailto:printqsupport@gmail.com",
+    },
+    { label: "+91 87671 59221", href: "tel:+918767159221" },
+    { label: "VIT Pune, India", href: "#" },
   ],
 };
 
@@ -63,11 +66,19 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-text">Developer</h3>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
-              Built as a college startup MVP to make campus printing faster and
-              stress-free for students.
+              Liked this project? Feel free to connect with me. I'm always open
+              to building custom web applications and bringing new ideas to
+              life.
             </p>
             <p className="mt-3 text-sm text-text-muted">
-              Stack: React, Tailwind, Node.js
+              Built by{" "}
+              <span className="font-medium text-black">Khasim Patel</span> •{" "}
+              <a
+                href="mailto:khasimpatel8767@gmail.com"
+                className="text-primary hover:underline"
+              >
+                khasimpatel8767@gmail.com
+              </a>
             </p>
           </div>
         </div>
@@ -77,7 +88,7 @@ export default function Footer() {
             &copy; {year} PrintQ. All rights reserved.
           </p>
           <p className="text-xs text-text-muted">
-            Student Module — Phase 1 MVP
+            PrintQ - Version 1.0
           </p>
         </div>
       </div>

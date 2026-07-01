@@ -81,3 +81,26 @@ export function markOrderReady(orderId) {
 export function markOrderCompleted(orderId) {
   return request(`/orders/${orderId}/complete`, { method: "PATCH" });
 }
+
+// --- Forgot Password ---
+
+export function forgotPassword(email) {
+  return request("/shops/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function verifyOtp(email, otp) {
+  return request("/shops/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({ email, otp }),
+  });
+}
+
+export function resetPassword(email, password) {
+  return request("/shops/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}

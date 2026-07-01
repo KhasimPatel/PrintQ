@@ -94,6 +94,19 @@ const shopSchema = new mongoose.Schema(
     },
 
     // ==========================
+    // Password Reset OTP
+    // ==========================
+    resetOtp: {
+      type: String,
+      default: null,
+    },
+
+    resetOtpExpiry: {
+      type: Date,
+      default: null,
+    },
+
+    // ==========================
     // Printing Prices
     // ==========================
     pricing: {

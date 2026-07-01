@@ -54,18 +54,13 @@ export function useAuth() {
                 password: formData.password,
             };
 
-            //   const response = await authService.register(payload);
             const response = await registerShopOwner(formData);
-            // console.log("✅ PrintQ Register Response:", response);
-            return true;
+            // console.log("✅ PrintGo Register Response:", response);
+            return { success: true };
         } catch (error) {
-            const message =
-                error?.response?.data?.message ||
-                error?.response?.data?.error ||
-                error?.message ||
-                "Registration failed. Please try again.";
-            console.error("❌ Register error:", error?.response?.data || error);
-            return false;
+            const message = error?.message || "Registration failed. Please try again.";
+            console.error("❌ Register error:", error);
+            return { success: false, message };
         } finally {
             setLoading(false);
         }
