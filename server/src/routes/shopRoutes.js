@@ -11,6 +11,7 @@ import {
   forgotPassword,
   verifyOtp,
   resetPassword,
+  changePassword,
 } from '../controllers/shopController.js';
 
 const router = express.Router();
@@ -31,5 +32,6 @@ router.post('/reset-password', resetPassword);
 // --- Shop owner, protected ---
 router.patch('/status', protectShopOwner, updateShopStatus);
 router.patch('/timings', protectShopOwner, updateShopTimings);   // new route for updating shop timings
+router.patch('/change-password', protectShopOwner, changePassword);
 
 export default router;

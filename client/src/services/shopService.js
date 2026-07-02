@@ -104,3 +104,10 @@ export function resetPassword(email, password) {
     body: JSON.stringify({ email, password }),
   });
 }
+
+export function changePassword({ currentPassword, newPassword }) {
+  return request("/shops/change-password", {
+    method: "PATCH",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}

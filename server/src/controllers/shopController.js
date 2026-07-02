@@ -284,3 +284,42 @@ export const resetPassword = asyncHandler(async (req, res) => {
     message: 'Password reset successfully.',
   });
 });
+
+/**
+ * Change Password (protected — shop owner must be logged in)
+ */
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    res.status(400);
+    throw new Error('Both current and new password are required.');
+  }
+
+  if (newPassword.length < 8) {
+    res.status(400);
+    throw new Error('New password must be at least 8 characters.');
+  }
+
+  const shop = await Shop.findById(req.shop._id);
+  if (!shop) {
+    res.status(404);
+    throw new Error('Shop not found.');
+  }
+
+  const isMatch = await bcrypt.compare(currentPassword, shop.password);
+  if (!isMatch) {
+    res.status(401);
+    throw new Error('Current password is incorrect.');
+  }
+
+  shop.password = await bcrypt.hash(newPassword, 10);
+  await shop.save();
+
+  sendPasswordChangedEmail(shop); // fire-and-forget
+
+  res.json({
+    success: true,
+    message: 'Password changed successfully.',
+  });
+});
