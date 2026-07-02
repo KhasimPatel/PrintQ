@@ -15,6 +15,37 @@ function renderOrderRow(order, actions) {
       <div>
         <p className="text-sm font-semibold text-text">{order.orderId}</p>
         <p className="mt-1 text-xs text-text-muted">{order.time}</p>
+        {order.files && order.files.length > 0 && (
+          <div className="mt-2 flex flex-col gap-1">
+            {order.files.map((file, idx) => (
+              <a
+                key={idx}
+                href={`https://docs.google.com/viewer?url=${encodeURIComponent(file.fileUrl)}&embedded=false`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium transition-colors"
+                style={{ color: "#EAB308" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#CA8A04")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#EAB308")}
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                {file.fileName || `File ${idx + 1}`}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
       <div>
         <p className="text-sm font-semibold text-text">{order.customer}</p>

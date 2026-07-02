@@ -57,9 +57,26 @@ function mapOrderForDashboard(order) {
   const printMode =
     order.printConfig?.printMode === "DOUBLE" ? "Double" : "Single";
 
+  // return {
+  //   id: order._id, // Mongo _id -- required by the action endpoints OrdersTable calls
+  //   orderId: order.orderId, // human-readable "ORD-2026-0001", available if the display label is ever swapped
+  //   customer: order.student?.fullName || "Unknown",
+  //   prn: order.student?.prn || "",
+  //   phone: order.student?.mobileNumber || "",
+  //   time: order.createdAt
+  //     ? new Date(order.createdAt).toLocaleTimeString([], {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       })
+  //     : "",
+  //   details: `${totalPages} pages - ${copies} cop${copies === 1 ? "y" : "ies"} - ${printType} - ${printMode}`,
+  //   amount: order.priceSummary?.totalPrice ?? 0,
+  //   status: BACKEND_TO_LOCAL_STATUS[order.status] || order.status,
+  //   rejectionReason: order.rejectionReason || null,
+  // };
   return {
-    id: order._id, // Mongo _id -- required by the action endpoints OrdersTable calls
-    orderId: order.orderId, // human-readable "ORD-2026-0001", available if the display label is ever swapped
+    id: order._id,
+    orderId: order.orderId,
     customer: order.student?.fullName || "Unknown",
     prn: order.student?.prn || "",
     phone: order.student?.mobileNumber || "",
@@ -73,6 +90,7 @@ function mapOrderForDashboard(order) {
     amount: order.priceSummary?.totalPrice ?? 0,
     status: BACKEND_TO_LOCAL_STATUS[order.status] || order.status,
     rejectionReason: order.rejectionReason || null,
+    files: order.files || [],
   };
 }
 
